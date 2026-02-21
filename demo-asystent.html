@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceLink - Przetestuj Asystenta AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple: #9257FD;
+            --purple-light: #a78bfa;
+            --cyan: #3AADFF;
+            --pink: #fa3cea;
+            --bg: #0a0a0f;
+            --card: rgba(255,255,255,0.03);
+            --border: rgba(255,255,255,0.08);
+            --text: #e5e5e5;
+            --text-muted: #a1a1aa;
+            --text-dim: #71717a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mesh-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% 30%, rgba(146,87,253,0.12) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 80% 70%, rgba(250,60,234,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse 50% 30% at 50% 50%, rgba(58,173,255,0.06) 0%, transparent 50%),
+                linear-gradient(135deg, #0a0a0f 0%, #0f0f18 50%, #0a0a0f 100%);
+        }
+
+        .demo-page {
+            position: relative;
+            z-index: 1;
+            max-width: 680px;
+            width: 100%;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        /* Back link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 40px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--purple-light);
+        }
+
+        /* Logo */
+        .demo-logo-img {
+            height: 80px;
+            width: auto;
+            display: block;
+            margin: 0 auto 40px;
+        }
+
+        /* Main card */
+        .demo-card {
+            background: linear-gradient(160deg, rgba(146,87,253,0.06) 0%, rgba(58,173,255,0.03) 50%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(146,87,253,0.15);
+            border-radius: 28px;
+            padding: 48px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-card::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(146,87,253,0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .demo-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 22px;
+            background: rgba(146,87,253,0.1);
+            border: 1px solid rgba(146,87,253,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 28px;
+            position: relative;
+        }
+
+        .demo-icon::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 26px;
+            border: 1px solid rgba(146,87,253,0.08);
+        }
+
+        .demo-card h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 14px;
+            letter-spacing: -0.03em;
+            position: relative;
+        }
+
+        .demo-card .demo-subtitle {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.75;
+            max-width: 460px;
+            margin: 0 auto 32px;
+            position: relative;
+        }
+
+        
+
+        
+
+        /* Checklist box */
+        .checklist-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px 28px;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .checklist-box .checklist-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+
+        .checklist-box .checklist-title svg {
+            color: var(--purple-light);
+            flex-shrink: 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .checklist-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .checklist-content {
+            flex: 1;
+        }
+
+        .checklist-content strong {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .checklist-content span {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        /* Custom info box */
+        .custom-box {
+            margin-top: 20px;
+            background: linear-gradient(135deg, rgba(58,173,255,0.06) 0%, rgba(146,87,253,0.04) 100%);
+            border: 1px solid rgba(58,173,255,0.12);
+            border-radius: 16px;
+            padding: 22px 26px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            text-align: left;
+        }
+
+        .custom-box-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(58,173,255,0.12);
+            border: 1px solid rgba(58,173,255,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .custom-box-text h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .custom-box-text p {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.65;
+        }
+
+        /* Info note */
+        .demo-note {
+            margin-top: 28px;
+            font-size: 12px;
+            color: var(--text-dim);
+            position: relative;
+        }
+
+        .demo-note svg {
+            vertical-align: -2px;
+            margin-right: 4px;
+            opacity: 0.5;
+        }
+
+        /* Pulse animation on icon */
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(146,87,253,0.3); }
+            70% { box-shadow: 0 0 0 16px rgba(146,87,253,0); }
+            100% { box-shadow: 0 0 0 0 rgba(146,87,253,0); }
+        }
+
+        .demo-icon {
+            animation: pulse-ring 3s ease-in-out infinite;
+        }
+
+        /* Widget pointer */
+        .widget-pointer {
+            position: fixed;
+            bottom: 28px;
+            right: 100px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 9998;
+            pointer-events: none;
+            animation: pointerBounce 2s ease-in-out infinite, pointerFadeIn 0.6s ease-out both;
+        }
+
+        .widget-pointer-box {
+            background: linear-gradient(135deg, var(--purple), #7c3aed);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 8px 30px rgba(146,87,253,0.4);
+            position: relative;
+        }
+
+        .widget-pointer-box::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 8px solid #7c3aed;
+        }
+
+        .widget-pointer-arrow {
+            font-size: 22px;
+            color: var(--purple-light);
+            animation: arrowPulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes pointerBounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-6px); }
+        }
+
+        @keyframes arrowPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        @keyframes pointerFadeIn {
+            0% { opacity: 0; transform: translateX(30px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        @media (max-width: 640px) {
+            .demo-page { padding: 40px 16px; }
+            .demo-card { padding: 36px 24px; border-radius: 22px; }
+            .demo-card h1 { font-size: 22px; }
+            .demo-card .demo-subtitle { font-size: 14px; }
+            .checklist-box { padding: 20px 20px; }
+            .custom-box { flex-direction: column; gap: 12px; padding: 20px 20px; }
+            .widget-pointer { right: 80px; bottom: 24px; }
+            .widget-pointer-box { font-size: 12px; padding: 10px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="mesh-bg"></div>
+
+<div class="demo-page">
+
+    <a href="brief-klienta.html" class="back-link">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Wroc do briefu
+    </a>
+
+    <img src="logo.png" alt="VoiceLink" class="demo-logo-img">
+
+    <div class="demo-card">
+        <div class="demo-icon">
+            <svg width="32" height="32" fill="none" stroke="#a78bfa" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+        </div>
+
+        <h1>Przetestuj asystenta sam</h1>
+        <p class="demo-subtitle">Porozmawiaj z naszym asystentem glosowym AI na zywo. Przekonaj sie, jak naturalnie prowadzi rozmowe i ustawia wizyty.</p>
+
+        <div class="checklist-box">
+            <div class="checklist-title">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                Co mozesz zapytac asystenta?
+            </div>
+            <div class="checklist-item">
+                <div class="checklist-num" style="background:rgba(146,87,253,0.15);border:1px solid rgba(146,87,253,0.2);">1</div>
+                <div class="checklist-content">
+                    <strong>Umow mnie do doktora Michalowskiego</strong>
+                    <span>Asystent zapyta o preferowany termin i zapisze Cie na wizyte</span>
+                </div>
+            </div>
+            <div class="checklist-item">
+                <div class="checklist-num" style="background:rgba(58,173,255,0.15);border:1px solid rgba(58,173,255,0.2);">2</div>
+                <div class="checklist-content">
+                    <strong>Jakie macie specjalizacje?</strong>
+                    <span>Dowiedz sie jakich lekarzy i specjalistow oferuje placowka</span>
+                </div>
+            </div>
+            <div class="checklist-item">
+                <div class="checklist-num" style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.2);">3</div>
+                <div class="checklist-content">
+                    <strong>Jakie sa godziny otwarcia?</strong>
+                    <span>Zapytaj o godziny pracy placowki lub konkretnego lekarza</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="custom-box">
+            <div class="custom-box-icon">
+                <svg width="18" height="18" fill="none" stroke="#67e8f9" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path stroke-linecap="round" stroke-linejoin="round" d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </div>
+            <div class="custom-box-text">
+                <h4>To jest asystent pogladowy</h4>
+                <p>Kazdy asystent VoiceLink jest indywidualnie konfigurowany i dostosowywany pod konkretna placowke — inni lekarze, inne godziny, inne uslugi. To co slyszysz to przykladowa wersja demonstracyjna.</p>
+            </div>
+        </div>
+
+        <p class="demo-note">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            Wersja demonstracyjna — zadne dane nie sa zapisywane.
+        </p>
+    </div>
+
+</div>
+
+<!-- Widget pointer -->
+<div class="widget-pointer" id="widgetPointer">
+    <div class="widget-pointer-box">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:-2px;margin-right:4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+        Kliknij tutaj, zeby porozmawiac
+    </div>
+    <span class="widget-pointer-arrow">&rarr;</span>
+</div>
+
+<elevenlabs-convai agent-id="agent_3701kj0ar1bye4at48scjvd09xpa"></elevenlabs-convai>
+<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+
+<script>
+    document.addEventListener('click', function(e) {
+        var pointer = document.getElementById('widgetPointer');
+        if (!pointer) return;
+        var widget = document.querySelector('elevenlabs-convai');
+        if (widget && (widget.contains(e.target) || e.target === widget)) {
+            pointer.style.transition = 'opacity 0.4s ease';
+            pointer.style.opacity = '0';
+            setTimeout(function() { pointer.style.display = 'none'; }, 400);
+        }
+    });
+    setTimeout(function() {
+        var pointer = document.getElementById('widgetPointer');
+        if (pointer && pointer.style.display !== 'none') {
+            pointer.style.transition = 'opacity 0.4s ease';
+            pointer.style.opacity = '0';
+            setTimeout(function() { pointer.style.display = 'none'; }, 400);
+        }
+    }, 15000);
+</script>
+
+</body>
+</html>
